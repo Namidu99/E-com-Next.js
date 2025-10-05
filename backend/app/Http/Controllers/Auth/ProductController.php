@@ -11,7 +11,8 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::query();
+        $query = Product::query()
+            ->where('active', '!=', '3');
 
         $filters = $request->only(['brand', 'search', 'min_price', 'max_price', 'rating', 'active']);
         $query->filter($filters);
@@ -138,4 +139,18 @@ class ProductController extends Controller
 
         return response()->json($products);
     }
+
+
+    public function stats()
+    {
+        $total = Product::count();
+        $active = Product::where('active', true)->count();
+
+        return response()->json([
+            'success' => true,
+            'total' => $total,
+            'active' => $active
+        ], 200);
+    }
+    
 }
